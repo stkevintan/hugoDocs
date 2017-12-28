@@ -95,8 +95,10 @@ Type here is `page` for pages, else the main type in the MIME type, so `image`, 
 
 ```html
 {{ with .Resources.ByType "page" }}
+{{ range . }}
 <h3>{{ .Title }}</h3>
 {{ .Content }}
+{{ end }}
 {{ end }}
 
 ```
