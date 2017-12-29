@@ -43,9 +43,9 @@ You can use any file type as a content resource as long as it is a MIME type rec
 
 The 3 page bundles marked in red explained from top to bottom:
 
-1. The home page with one bundled image (`1-logo.png`)
-2. The blog section with two bundled images and two bundled pages (`content1.md`, `content2.md`). Note that the `_index.md` represents the URL for this section.
-3. An article (`hugo-is-cool`) with a folder with some images and one bundled content file (`cats-info.md`). Note that the `index.md` represents the URL for this article.
+1. The home page with one image resource (`1-logo.png`)
+2. The blog section with two images resources and two pages resources (`content1.md`, `content2.md`). Note that the `_index.md` represents the URL for this section.
+3. An article (`hugo-is-cool`) with a folder with some images and one content resource (`cats-info.md`). Note that the `index.md` represents the URL for this article.
 
 The content files below `blog/posts` are just regular standalone pages.
 
@@ -71,7 +71,7 @@ Note that changes to any resource inside the `content` folder will trigger a rel
 
 For an absolute URL, use `.Permalink`.
 
-**Note:** The permalink will be relative to the content page, respecting permalink settings. Also, bundled pages will not have a value for `RelPermalink`.
+**Note:** The permalink will be relative to the content page, respecting permalink settings. Also, included page resources will not have a value for `RelPermalink`.
 
 #### List All Resources by Type
 
@@ -109,13 +109,18 @@ Type here is `page` for pages, else the main type in the MIME type, so `image`, 
 The `image` resource implements the methods `Resize`, `Fit` and `Fill`:
 
 Resize
-: Resize to the given dimensin, `{{ $logo.Resize "200x" }}` will resize to 200 pixels wide and preserve the aspect ratio. Use `{{ $logo.Resize "200x100" }}` to control both height and width.
+: Resize to the given dimension, `{{ $logo.Resize "200x" }}` will resize to 200 pixels wide and preserve the aspect ratio. Use `{{ $logo.Resize "200x100" }}` to control both height and width.
 
 Fit
 : Scale down the image to fit the given dimensions, e.g. `{{ $logo.Fit "200x100" }}` will fit the image inside a box that is 200 pixels wide and 100 pixels high.
 
 Fill
-: Resize and crop the image given dimensions, e.g. `{{ $logo.Fill "200x100" }}` will resize and crop to width 200 and height 100.
+: Resize and crop the image given dimensions, e.g. `{{ $logo.Fill "200x100" }}` will resize and crop to width 200 and height 100
+
+
+{{% note %}}
+Image operations in Hugo currently **do not preserve EXIF data** as this is not supported by Go's [image package](https://github.com/golang/go/search?q=exif&type=Issues&utf8=%E2%9C%93). This will be improved on in the future.
+{{% /note %}}
 
 
 ### Image Processing Options
@@ -129,7 +134,7 @@ JPEG Quality
 : Only relevant for JPEG images, values 1 to 100 inclusive, higher is better. Default is 75. `{{ $logo.Resize "200x q50" }}`
 
 Rotate
-: Rotates an image by the given angle counter-clockwise. The rotation will be performed first to get the dimensions correct. `{{ $logo.Resize "200x r90" }}`
+: Rotates an image by the given angle counter-clockwise. The rotation will be performed first to get the dimensions correct. `{{ $logo.Resize "200x r90" }}`. The main use of this is to be able to manually correct for [EXIF orientation](https://github.com/golang/go/issues/4341) of JPEG images.
 
 Resample Filter
 : Filter used in resizing. Default is `Box`, a simple and fast resampling filter appropriate for downscaling. See https://github.com/disintegration/imaging for more. If you want to trade quality for faster processing, this may be a option to test. 
@@ -158,7 +163,7 @@ hugo --gc
 
 ### Default Image Processing Config
 
-The below values from `config.toml` will be used if none is set in the template:
+You can configure an `imaging` section in `config.toml` with default image processing options:
 
 ```toml
 [imaging]
